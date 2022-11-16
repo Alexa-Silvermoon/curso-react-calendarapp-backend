@@ -1,4 +1,3 @@
-
 const { Schema, model } = require('mongoose');
 
 // usado en events.js de controllers
@@ -45,6 +44,6 @@ EventoSchema.method('toJSON', function(){
 
 });
 
-module.exports = model( 'Evento', EventoSchema );
+module.exports = model('Evento', EventoSchema );
 // creacion modelo del evento: https://www.udemy.com/course/react-cero-experto/learn/lecture/20401421?start=0#questions
 // grabar evento en la base de datos: https://www.udemy.com/course/react-cero-experto/learn/lecture/20402461#questions
