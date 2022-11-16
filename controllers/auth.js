@@ -1,8 +1,6 @@
-
-// const express = require('express');
 const { response } = require('express');
 const bcrypt = require('bcryptjs'); // para encriptar contraseñas
-const Usuario = require('../models/Usuario');
+const Usuario = require('../models/usuario');
 const { generarJWT } = require('../helpers/jwt');
 
 // const crearUsuario = ( req, res = express.response ) => { // usado en auth.js de routes
