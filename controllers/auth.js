@@ -1,6 +1,7 @@
 const { response } = require('express');
 const bcrypt = require('bcryptjs'); // para encriptar contraseñas
-const Usuario = require('../models/Usuario');
+// const Usuario = require('../models/Usuario');
+const Usuario = require('../models/usuario'); // fue necesario por railway
 const { generarJWT } = require('../helpers/jwt');
  
 const crearUsuario = async(req, res = response ) => { // usado en auth.js de routes
@@ -124,7 +125,6 @@ const loginUsuario = async(req, res = response ) => { // usado en auth.js de rou
     }
 
 }
-
 
 const revalidarToken = async (req, res = response ) => { // usado en auth.js de rutes
 
