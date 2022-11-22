@@ -1,152 +1,143 @@
 const { response } = require('express');
 const bcrypt = require('bcryptjs'); // para encriptar contraseñas
-const Usuario = require('../models/usuario');
+const Usuario = require('../models/Usuario');
 const { generarJWT } = require('../helpers/jwt');
+ 
+const crearUsuario = async(req, res = response ) => { // usado en auth.js de routes
 
-// const crearUsuario = ( req, res = express.response ) => { // usado en auth.js de routes
-const crearUsuario = async( req, res = response ) => { // usado en auth.js de routes
-
-    console.log( req.body ); // cmd: { name: 'Alexander', correo: 'alexander@gmail.com', password: '123456' }
-
-    // const { name, correo, password } = req.body; // la req viene desde postman ( body, raw json)
-    const { correo, password } = req.body; // la req viene desde postman ( body, raw json)
+    // console.log( req.body ); // cmd: { name: 'Alexander', correo: 'alexander@gmail.com', password: '123456' }
+    const { email, password } = req.body; // la req viene desde postman ( body, raw json)
 
     try {
 
         // buscar si usuario registrandose YA existe con ese mismo correo en la BD
-        let usuario = await Usuario.findOne( { correo: correo } );
-        console.log( usuario );
+        let usuario = await Usuario.findOne({ email });
+        // console.log( usuario );
 
-        if ( usuario ){
+        if ( usuario ) {
 
             return res.status(400).json({
 
                 ok: false,
-                msg: 'un usuario existe con ese correo'
+                msg: 'El usuario ya existe'
 
             });
+
         }
 
         usuario = new Usuario( req.body );
-
+    
         // Encriptar contraseña
         const salt = bcrypt.genSaltSync();
         usuario.password = bcrypt.hashSync( password, salt );
 
+
         await usuario.save();
 
         // Generar JWT
-        const token = await generarJWT( usuario.id, usuario.nombre );
-
-        res.status(201).json({ // 201 todo salio bien
+        const token = await generarJWT( usuario.id, usuario.name );
+    
+        res.status(201).json({
 
             ok: true,
-            uid: usuario.id, // uid traido desde mongo automaticamente
-            nombre: usuario.nombre,
-            token,
-            msg: 'registro con exito',
-            // user: req.body
-            // name,
-            // correo,
-            // password
+            uid: usuario.id,
+            name: usuario.name,
+            token
 
-        });
+        })
         
     } catch (error) {
 
-        console.log( error );
+        console.log(error)
 
         res.status(500).json({
 
             ok: false,
-            msg: 'por favor hablar con el administrador'
+            msg: 'Por favor hable con el administrador'
 
         });
-        
-    }
 
+    }
 
 }
 
-const loginUsuario = async( req, res = response ) => { // usado en auth.js de routes
+const loginUsuario = async(req, res = response ) => { // usado en auth.js de routes
 
-    const { correo, password } = req.body; // la req viene desde postman ( body, raw json)
+    const { email, password } = req.body; // la req viene desde postman ( body, raw json)
+    // console.log( { email, password} );
 
     try {
+        
+        const usuario = await Usuario.findOne({ email });
+        // console.log( usuario );
 
-        const usuario = await Usuario.findOne( { correo: correo } );
-        console.log( usuario );
-
-        if ( !usuario ){
+        if ( !usuario ) {
 
             return res.status(400).json({
 
                 ok: false,
-                msg: 'no existe un usuario con ese correo'
+                msg: 'El usuario no existe con ese email'
 
             });
+
         }
 
         // Confirmar los passwords, si el password en el login es el mismo en la BD
         // validPassword es booleano
         const validPassword = bcrypt.compareSync( password, usuario.password );
 
-        if ( !validPassword ){
+        if ( !validPassword ) {
 
             return res.status(400).json({
 
                 ok: false,
-                msg: 'contraseña incorrecta'
+                msg: 'Password incorrecto'
 
             });
 
         }
 
-        // Generar nuestro JWT
-        const token = await generarJWT( usuario.id, usuario.nombre );
+        // Generar JWT
+        const token = await generarJWT( usuario.id, usuario.name );
 
-        res.status(201).json({
+        res.json({
 
             ok: true,
             uid: usuario.id,
-            nombre: usuario.nombre,
-            token,
-            msg: 'login exitoso',
+            name: usuario.name,
+            token
+            // msg: 'login exitoso',
 
-        });
-        
+        })
+
     } catch (error) {
 
-        console.log( error );
+        console.log(error);
 
         res.status(500).json({
 
             ok: false,
-            msg: 'por favor hablar con el administrador'
+            msg: 'Por favor hable con el administrador'
 
         });
-        
+
     }
 
 }
 
-const revalidarToken = async( req, res = response ) => { // usado en auth.js de rutes
 
-    const { uid, nombre } = req;   // viene desde validar-jwt.js
+const revalidarToken = async (req, res = response ) => { // usado en auth.js de rutes
+
+    const { uid, name } = req; // viene desde validar-jwt.js
 
     // generar un nuevo JWT y retornarlo en esta peticion
-    const token = await generarJWT( uid, nombre );
+    const token = await generarJWT( uid, name );
 
-    // console.log( 'se requiere el /' );
     res.json({
 
         ok: true,
-        uid,
-        nombre,
-        token,
-        msg: 'token renovado con exito'
-
-    });
+        token
+    })
 
 }
 
@@ -155,6 +146,7 @@ module.exports = {
     crearUsuario,
     loginUsuario,
     revalidarToken
+    
 }
 
 // endpoint crear y login https://www.udemy.com/course/react-cero-experto/learn/lecture/20380977?start=15#questions

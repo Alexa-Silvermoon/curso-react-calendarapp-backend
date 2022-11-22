@@ -1,36 +1,30 @@
-// console.log('hola mundo xdd');
-
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
 const { dbConnection } = require('./database/config');
 
-// Creando el Servidor de Express
+// Crear el servidor de express
 const app = express();
 
-// Base de Datos
+// Base de datos
 dbConnection();
 
 // CORS
-app.use( cors() );
+app.use(cors())
 
-// Directorio Publico
-app.use(express.static('public'));
+// Directorio Público
+app.use( express.static('public') );
 
 // Lectura y parseo del body
 app.use( express.json() );
 
 // Rutas
-app.use( '/api/auth', require('./routes/auth') ); // el archivo auth.js tendra efecto en la ruta /api/auth
-app.use( '/api/events', require('./routes/events') ); // el archivo events.js tendra efecto en la ruta /api/events
+app.use('/api/auth', require('./routes/auth') ); // el archivo auth.js tendra efecto en la ruta /api/auth
+app.use('/api/events', require('./routes/events') ); // el archivo events.js tendra efecto en la ruta /api/events
 
-//TODO: CRUD, eventos
-
-// Escuchar Peticiones
+// Escuchar peticiones
 app.listen( process.env.PORT, () => {
-
-    console.log(`Servidor corriene en el puerto ${ process.env.PORT }` );
-
+    console.log(`Servidor corriendo en puerto ${ process.env.PORT }`);
 });
 
 // configurando express: https://www.udemy.com/course/react-cero-experto/learn/lecture/20364371#questions

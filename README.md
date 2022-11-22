@@ -20,7 +20,7 @@ Auth - Crear usuario:   localhost:4000/api/auth/new
 Auth - Crear Login:     localhost:4000/api/auth
 Auth - Revalidar JWT:   localhost:4000/api/auth
 
-Events - crearEvento:        localhost:4000/api/events/new
+Events - crearEvento:        localhost:4000/api/events
 Events - getEventos:         localhost:4000/api/events
 Events - actualizarEvento:   localhost:4000/api/events/ID_MONGO
 Events - eliminarEvento:     localhost:4000/api/events/ID_MONGO

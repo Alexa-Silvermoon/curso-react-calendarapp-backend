@@ -1,9 +1,13 @@
-const { Router } = require("express");
-const router = Router();
+/*
+    Event Routes
+    /api/events
+*/
+const { Router } = require('express');
 const { check } = require('express-validator');
-const { isDate } = require("../helpers/isDate");
-const { validarJWT } = require('../middlewares/validar-jwt');
+
+const { isDate } = require('../helpers/isDate');
 const { validarCampos } = require('../middlewares/validar-campos');
+const { validarJWT } = require('../middlewares/validar-jwt');
 const { getEventos, crearEvento, actualizarEvento, eliminarEvento } = require('../controllers/events');
 
 /* 
@@ -11,38 +15,44 @@ Rutas de Eventos
 localhost:4000/api/events
 */
 
-// Todas las rutas tienen que pasar po la validacion de JWT
+const router = Router();
+
+// Todas tienes que pasar por la validación del JWT
 // de la siguiente  forma el validarJWT se aplica a todas las rutas y asi no tengo necesidad de ponerlo uno por uno en cada una de las rutas
 router.use( validarJWT );
 
-// Obtener eventos
-
-// Obtener eventos
+// Obtener eventos 
 // router.get('/', validarJWT , getEventos );
 router.get('/', getEventos );
 // localhost:4000/api/events
 
 // Crear un nuevo evento
-router.post('/new', [
+router.post(
+    '/',
+    [
+        check('title','El titulo es obligatorio').not().isEmpty(),
+        check('start','Fecha de inicio es obligatoria').custom( isDate ),
+        check('end','Fecha de finalización es obligatoria').custom( isDate ),
+        validarCampos
+    ],
+    crearEvento 
+); // localhost:4000/api/events
 
-                        // validarJWT,
-                        check('titulo', 'El titulo es obligatorio').not().isEmpty(),
-                        check('inicio', 'La fecha de inicio es obligatoria').custom( isDate ),
-                        check('fin', 'La fecha de fin es obligatoria').custom( isDate ),
-                        validarCampos
-
-                    ], crearEvento
-); // localhost:4000/api/events/new
-
-// Actualizar evento
+// Actualizar Evento
 // router.put('/:id', validarJWT, actualizarEvento );
-router.put('/:id', actualizarEvento );
-// localhost:4000/api/events/ID_MONGO
+router.put(
+    '/:id', 
+    [
+        check('title','El titulo es obligatorio').not().isEmpty(),
+        check('start','Fecha de inicio es obligatoria').custom( isDate ),
+        check('end','Fecha de finalización es obligatoria').custom( isDate ),
+        validarCampos
+    ],
+    actualizarEvento 
+);// localhost:4000/api/events/ID_MONGO
 
 // Borrar evento
-// router.delete('/:id', validarJWT, eliminarEvento );
 router.delete('/:id', eliminarEvento );
-// localhost:4000/api/events/ID_MONGO
 
 module.exports = router;
 
