@@ -22,6 +22,12 @@ app.use( express.json() );
 app.use('/api/auth', require('./routes/auth') ); // el archivo auth.js tendra efecto en la ruta /api/auth
 app.use('/api/events', require('./routes/events') ); // el archivo events.js tendra efecto en la ruta /api/events
 
+// activar esto solo si nuestro frontend con build esta dentro de la carpeta public del backend
+/* app.get('*', ( req, res ) => {
+
+    res.sendFile(__dirname + 'public/index.html');
+}) */
+
 // Escuchar peticiones
 app.listen( process.env.PORT, () => {
     console.log(`Servidor corriendo en puerto ${ process.env.PORT }`);
